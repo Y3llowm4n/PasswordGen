@@ -1,4 +1,5 @@
 // add max length of password
+// randomize position of characters
 // error logging
 // username duplicate error
 // database connecten met file
