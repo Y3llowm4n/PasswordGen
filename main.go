@@ -17,13 +17,22 @@ import (
 
 // global variable which includes all the letters, numbers and tokens.
 var (
-	letters        = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()")
-	lengthPassword int
+	//lengthPassword int
+	Lower   int
+	Upper   int
+	Special int
 )
 
 func init() {
-	flag.IntVar(&lengthPassword, "p", 12, "Give a value for the length off your password")
+	flag.IntVar(&Lower, "l", 4, "Give number for amount of lowercase letters")
+	flag.IntVar(&Upper, "u", 4, "Give number for amount of uppercase letters")
+	flag.IntVar(&Special, "s", 4, "Give number for amount of special characters")
+	//flag.IntVar(&lengthPassword, "p", 12, "Give a value for the length off your password")
 	flag.Parse()
+
+	// if lengthPassword < 8 || lengthPassword > 64 {
+	// 	log.Fatal("Password length must be between 8 and 64 characters")
+	// }
 }
 
 func main() {
@@ -38,21 +47,16 @@ func getUser() string {
 	fmt.Scanln(&username)
 	return username
 }
-func genPassword() {
+
+func genPassword() string {
 
 	rand.Seed(time.Now().UnixNano())
 
-	str1 := "abcdefghijklmnopqrstuvwxyz"
-	str2 := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	str3 := "1234567890!@#$%^&*()"
+	lowercaseLetters := "abcdefghijklmnopqrstuvwxyz"
+	uppercaseLetters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	specialCharacters := "1234567890!@#$%^&*()"
 
-	str := str1 + str2 + str3
+	password := lowercaseLetters + uppercaseLetters + specialCharacters
 
-	p := make([]rune, lengthPassword)
-
-	for i := range p {
-		p[i] = letters[rand.Intn(len(str))]
-	}
-
-	fmt.Println("Password:", string(p))
+	return password
 }
