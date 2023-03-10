@@ -1,14 +1,12 @@
-// input wachtwoord geven
-// functie wachtwoord genereren
-// functie hashing
-
-// username toevoegen
+// add max length of password
+// error logging
 // username duplicate error
 // database connecten met file
 // error schrijven naar logfile
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"math/rand"
@@ -17,30 +15,29 @@ import (
 
 // global variable which includes all the letters, numbers and tokens.
 var (
-	//lengthPassword int
-	Lower   int
-	Upper   int
-	Special int
+	lowerCount     int
+	upperCount     int
+	specialCount   int
+	lengthPassword int
 )
 
+// here's all the input that the user can specify.
 func init() {
-	flag.IntVar(&Lower, "l", 4, "Give number for amount of lowercase letters")
-	flag.IntVar(&Upper, "u", 4, "Give number for amount of uppercase letters")
-	flag.IntVar(&Special, "s", 4, "Give number for amount of special characters")
-	//flag.IntVar(&lengthPassword, "p", 12, "Give a value for the length off your password")
+	flag.IntVar(&lowerCount, "l", 0, "Number of lowercase letters in password")
+	flag.IntVar(&upperCount, "u", 0, "Number of uppercase letters in password")
+	flag.IntVar(&specialCount, "s", 0, "Number of special characters in password")
+	flag.IntVar(&lengthPassword, "p", 0, "Give a value for the length off your password")
 	flag.Parse()
-
-	// if lengthPassword < 8 || lengthPassword > 64 {
-	// 	log.Fatal("Password length must be between 8 and 64 characters")
-	// }
 }
 
 func main() {
 	username := getUser()
-	fmt.Println("Name:", username)
-	genPassword()
+	fmt.Println("Username:", username)
+	password := genPassword(lowerCount, upperCount, specialCount)
+	fmt.Println("Password:", password)
 }
 
+// Give username for log in.
 func getUser() string {
 	var username string
 	fmt.Println("Please give a username")
@@ -48,15 +45,44 @@ func getUser() string {
 	return username
 }
 
-func genPassword() string {
+// Generate customized password with given inputs by user.
+func genPassword(lowerCount, upperCount, specialCount int) string {
+
+	lowercase := []rune("abcdefghijklmnopqrstuvwxyz")
+	uppercase := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	special := []rune("1234567890~!@#$%^&*()")
 
 	rand.Seed(time.Now().UnixNano())
 
-	lowercaseLetters := "abcdefghijklmnopqrstuvwxyz"
-	uppercaseLetters := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	specialCharacters := "1234567890!@#$%^&*()"
+	//save the password inside the buffer
+	var buffer bytes.Buffer
 
-	password := lowercaseLetters + uppercaseLetters + specialCharacters
+	//add the given amount of lowercase characters.
+	for i := 0; i < lowerCount; i++ {
+		buffer.WriteRune(lowercase[rand.Intn(len(lowercase))])
+	}
 
-	return password
+	//add the given amount of uppercase characters.
+	for i := 0; i < upperCount; i++ {
+		buffer.WriteRune(uppercase[rand.Intn(len(uppercase))])
+	}
+
+	//add the given amount of special characters.
+	for i := 0; i < specialCount; i++ {
+		buffer.WriteRune(special[rand.Intn(len(special))])
+	}
+
+	// adds random character from the three options to meet the required length.
+	for buffer.Len() < lengthPassword {
+		switch rand.Intn(3) {
+		case 0:
+			buffer.WriteRune(lowercase[rand.Intn(len(lowercase))])
+		case 1:
+			buffer.WriteRune(uppercase[rand.Intn(len(uppercase))])
+		case 2:
+			buffer.WriteRune(special[rand.Intn(len(special))])
+		}
+	}
+
+	return buffer.String()
 }
