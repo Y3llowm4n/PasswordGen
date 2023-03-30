@@ -1,0 +1,10 @@
+{
+    "database": [
+        {
+            "host": "192.162.180.17:3306",
+            "dbuser": "student",
+            "dbpass": "admin01",
+            "dbname": "data"
+        }
+    ]   
+  }

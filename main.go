@@ -1,19 +1,13 @@
-// add max length of password
-// randomize position of characters
-// error logging
-// username duplicate error
-// database connecten met file
-// error schrijven naar logfile
 package main
 
 import (
 	"bytes"
-	"database/sql"
 	"flag"
 	"fmt"
-	"log"
 	"math/rand"
 	"time"
+
+	"github.com/Y3llowm4n/PasswordGen/ConnectDb.go"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
@@ -25,12 +19,6 @@ var (
 	upperCount     int
 	specialCount   int
 	lengthPassword int
-)
-
-const (
-	dbname = "data"
-	dbuser = "student"
-	dbpass = "admin01"
 )
 
 // here's all the input that the user can specify.
@@ -48,21 +36,8 @@ func main() {
 	fmt.Println("Username:", username)
 	password := genPassword(lowerCount, upperCount, specialCount)
 	fmt.Println("Password:", password)
-	ConnectDB()
+	ConnectDb.ConnectDB()
 }
-
-// connect with database
-func ConnectDB() {
-	db, err := sql.Open("mysql", dbuser+":"+dbpass+"@tcp(192.168.180.17:3306)/"+dbname)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
-	fmt.Println("Succesfully connected!")
-}
-
-
 
 // Give username for log in.
 func getUser() string {
