@@ -8,10 +8,15 @@ package main
 
 import (
 	"bytes"
+	"database/sql"
 	"flag"
 	"fmt"
+	"log"
 	"math/rand"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 // global variable which includes all the letters, numbers and tokens.
@@ -22,20 +27,39 @@ var (
 	lengthPassword int
 )
 
+const (
+	dbname = "data"
+	dbuser = "student"
+	dbpass = "admin01"
+)
+
 // here's all the input that the user can specify.
 func init() {
-	flag.IntVar(&lowerCount, "l", 0, "Number of lowercase letters in password")
-	flag.IntVar(&upperCount, "u", 0, "Number of uppercase letters in password")
-	flag.IntVar(&specialCount, "s", 0, "Number of special characters in password")
-	flag.IntVar(&lengthPassword, "p", 0, "Give a value for the length off your password")
+	flag.IntVar(&lowerCount, "l", 2, "Number of lowercase letters in password")
+	flag.IntVar(&upperCount, "u", 3, "Number of uppercase letters in password")
+	flag.IntVar(&specialCount, "s", 4, "Number of special characters in password")
+	flag.IntVar(&lengthPassword, "p", 12, "Give a value for the length off your password")
 	flag.Parse()
 }
 
 func main() {
+	fmt.Println(dbpass)
 	username := getUser()
 	fmt.Println("Username:", username)
 	password := genPassword(lowerCount, upperCount, specialCount)
 	fmt.Println("Password:", password)
+	ConnectDB()
+}
+
+// connect with database
+func ConnectDB() {
+	db, err := sql.Open("mysql", dbuser+":"+dbpass+"@tcp(192.168.180.17:3306)/"+dbname)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	fmt.Println("Succesfully connected!")
 }
 
 // Give username for log in.
