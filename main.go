@@ -62,6 +62,8 @@ func ConnectDB() {
 	fmt.Println("Succesfully connected!")
 }
 
+
+
 // Give username for log in.
 func getUser() string {
 	var username string
